@@ -8,19 +8,24 @@
 #define STEPS 100
 #define ANGLE 3.1415926 * 2.f / STEPS
 
+enum Dir { Up, Down, Left, Right };
+
 int main() {
   GLFWwindow *window;
   if (!glfwInit()) {
-    return -1;
+    exit(EXIT_FAILURE);
+    ;
   }
   window = glfwCreateWindow(640, 480, "window", NULL, NULL);
   glfwMakeContextCurrent(window);
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     std::cout << "could not load opengl\n";
     glfwTerminate();
-    return -1;
+    exit(EXIT_FAILURE);
+    ;
   }
   float x = 0, y = 0, radius = 1 / 20.0;
+  Dir dir = Right;
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
     glClear(GL_COLOR_BUFFER_BIT);
@@ -37,6 +42,10 @@ int main() {
       glEnd();
       oldx = newx;
       oldy = newy;
+    }
+    if (x >= 1.0 + radius || y >= 1.0 + radius || x <= -1.0 - radius ||
+        y <= -1.0 - radius) {
+      exit(EXIT_FAILURE);
     }
     x += 2 * radius;
     std::chrono::milliseconds span((int)1e3);
